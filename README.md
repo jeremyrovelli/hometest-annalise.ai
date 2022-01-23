@@ -5,7 +5,7 @@ This repository contains smoke tests covering the image tagging system requireme
 
 ### Technical considerations  
 It was built in Node.js and relies on the jest test framework.
-The http requests are built and executed using the supertest module, and the asynchronous nature of those test is handled using async/await.
+The http requests are built and executed using the supertest module, and the asynchronous nature of those tests is handled using async/await.
 
 ## General approach
 
