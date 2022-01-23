@@ -1,8 +1,11 @@
 {
+    "scripts": {
+        "test": "npx eslint images.test.js && jest"
+    },
     "devDependencies": {
-    "eslint": "^8.7.0",
-    "eslint-config-google": "^0.14.0",
-    "jest": "^27.4.7",
-    "supertest": "^6.2.2"
-  }
-} 
+        "eslint": "^8.7.0",
+        "eslint-config-google": "^0.14.0",
+        "jest": "^27.4.7",
+        "supertest": "^6.2.2"
+    }
+}
