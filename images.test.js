@@ -61,3 +61,40 @@ test('upload a new image', async () => {
 });
 
 // TODO (improvement): add a test to check max size for uploaded file
+
+// check that users can update tags for an uploaded image
+// notes: we rely on the image uploaded in previous test
+test('update tags for existing image', async () => {
+  // create the body for the get image request
+  const body = {
+    'tags': ['foo-x', 'bar-x'],
+  };
+
+  const responseUpdate = await request('localhost:8000')
+      .put(`/v1/images/${imageId}`)
+      .set('Accept', 'application/json')
+      .send(body);
+
+  // optional: check that filename is correct,
+  // to increase confidence that we are considering the correct image
+  expect(responseUpdate.body.filename).toEqual(filename);
+
+  expect(responseUpdate.status).toEqual(200);
+  expect(responseUpdate.headers['content-type']).toEqual('application/json');
+
+  // check that new tags are correct
+  const newTags = responseUpdate.body.tags;
+  expect(newTags).not.toBeNull();
+
+  // store tags names in variable
+  const newTagsNames = [];
+  for (let i = 0; i < newTags.length; i++) {
+    newTagsNames.push(newTags[i].name);
+  }
+
+  // check that new tags have been added,
+  // and previous tags (foo, bar) are not present anymore
+  expect(newTagsNames).toEqual(expect.arrayContaining(['foo-x', 'bar-x']));
+  expect(newTagsNames).toEqual(expect.not.arrayContaining(['foo']));
+  expect(newTagsNames).toEqual(expect.not.arrayContaining(['bar']));
+});
