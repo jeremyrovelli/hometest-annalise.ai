@@ -98,3 +98,37 @@ test('update tags for existing image', async () => {
   expect(newTagsNames).toEqual(expect.not.arrayContaining(['foo']));
   expect(newTagsNames).toEqual(expect.not.arrayContaining(['bar']));
 });
+
+test('programmatically retrieve all images', async () => {
+  const responseGetImages = await request('localhost:8000')
+      .get(`/v1/images/`)
+      .set('Accept', 'application/json');
+
+  expect(responseGetImages.status).toEqual(200);
+  expect(responseGetImages.headers['content-type']).toEqual('application/json');
+
+  // there should be at least one image in postgres/s3 at that stage,
+  // because of the 'upload a new image' test running
+
+  // TODO (improvement): come with a clean way to have available images
+  //  when tests start (and clean the data when tests end)
+  const images = responseGetImages.body.results;
+  expect(images).not.toBeNull();
+
+  // iterate on results and store all urls in variable
+  const imagesUrls = [];
+  for (let i = 0; i < images.length; i++) {
+    imagesUrls.push(images[i].url);
+  }
+
+  // for each url, check that the file can be downloaded from s3
+  for (let i = 0; i < imagesUrls.length; i++) {
+    // we only try to download a file from s3 if a url is present
+    if (imagesUrls[i]!=null) {
+      const responseGetS3 = await request(imagesUrls[i])
+          .get('');
+
+      expect(responseGetS3.status).toEqual(200);
+    }
+  }
+});
