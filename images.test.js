@@ -11,7 +11,7 @@ const filename = 'image-test-upload-'+Date.now()+'.dcm';
 
 // check that users can upload a new image
 test('upload a new image', async () => {
-  // TODO: prepare image in base64
+  // prepare image in base64
   const imageBase64 = fs.readFileSync('samples/image-00000.dcm', 'base64');
 
   // create the body for the upload request
@@ -38,7 +38,7 @@ test('upload a new image', async () => {
   imageId = responseUpload.body.id;
   expect(imageId).not.toBeNull();
 
-  // data persistence: check that the image was created correctly in postgres
+  // data persistency: check that the image was created correctly in postgres
   const responseGet = await request('localhost:8000')
       .get(`/v1/images/${imageId}`)
       .set('Accept', 'application/json');
@@ -51,7 +51,7 @@ test('upload a new image', async () => {
   expect(imageUrl).toMatch(new RegExp(`^http?`));
   expect(imageUrl).toContain(filename);
 
-  // data persistence: check that the image was correctly uploaded to s3
+  // data persistency: check that the image was correctly uploaded to s3
   const responseGetS3 = await request(imageUrl)
       .get('');
 
@@ -62,7 +62,7 @@ test('upload a new image', async () => {
 
 // TODO (improvement): add a test to check max size for uploaded file
 
-// check that users can update tags for an uploaded image
+// check that users can update tags for an existing image
 // notes: we rely on the image uploaded in previous test
 test('update tags for existing image', async () => {
   // create the body for the get image request
@@ -107,8 +107,8 @@ test('programmatically retrieve all images', async () => {
   expect(responseGetImages.status).toEqual(200);
   expect(responseGetImages.headers['content-type']).toEqual('application/json');
 
-  // there should be at least one image in postgres/s3 at that stage,
-  // because of the 'upload a new image' test running
+  // notes: there should be at least one image in postgres and s3 at that stage,
+  // because of the 'upload a new image' test that has run
 
   // TODO (improvement): come with a clean way to have available images
   //  when tests start (and clean the data when tests end)
@@ -129,6 +129,9 @@ test('programmatically retrieve all images', async () => {
           .get('');
 
       expect(responseGetS3.status).toEqual(200);
+
+      // TODO (improvement): check that an actual file is downloaded
+      // and size is not zero.
     }
   }
 });
