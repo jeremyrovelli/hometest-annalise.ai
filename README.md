@@ -24,8 +24,8 @@ We can also <b>schedule a recurrent build of this pipeline to run in UAT or PROD
 
 ### Limitations and room for improvement
 -more complete tests (example: check all fields in responses returned by server)  
--Handling of an environment variable (local/UAT/PROD) in config.js file  
--better handling of required data (creation/deletion) before/after tests run  
+-handling of an environment variable (local/UAT/PROD) in config.js file  
+-better handling of required data (creation/deletion) before/after tests run (example of side effect with current tests: the "upload" test will keep on creating images, and the "retrieve images" tests will take longer and longer to execute)  
 -downloading image file from s3 currently only checks status code (could check that we receive an actual file with correct title and size)  
 -check that parameters and requests body are correctly handled by server (400 bad request should be sent)   
 -add a test to check that images above 3.96 MB can't be uploaded   
